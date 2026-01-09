@@ -20,15 +20,23 @@ const SeatBooking = () => {
     const SEATS_PER_ROW = 10;
 
     const initializeSeats = () => {
+        const storedBookings = localStorage.getItem('bookedSeats');
+        const bookedSeatIds = storedBookings ? JSON.parse(storedBookings) : [];
+
         const seats = [];
         for (let row = 0; row < ROWS; row++) {
             const rowSeats = [];
             for (let seat = 0; seat < SEATS_PER_ROW; seat++) {
+                const seatId = `${row}-${seat}`;
+                const status = bookedSeatIds.includes(seatId)
+                    ? SEAT_STATUS.BOOKED
+                    : SEAT_STATUS.AVAILABLE;
+
                 rowSeats.push({
-                    id: `${row}-${seat}`,
+                    id: seatId,
                     row: row,
                     seat: seat,
-                    status: SEAT_STATUS.AVAILABLE
+                    status: status
                 });
             }
             seats.push(rowSeats);
@@ -36,11 +44,15 @@ const SeatBooking = () => {
         return seats;
     };
 
-    const [seats, setSeats] = useState(initializeSeats());
+    const [seats, setSeats] = useState(initializeSeats);
 
     // TODO: Implement all required functionality below
 
-    const getSeatPrice = (row) => { return 0; };
+    const getSeatPrice = (row) => {
+        if (row <= 2) return SEAT_PRICES.PREMIUM;
+        if (row <= 5) return SEAT_PRICES.STANDARD;
+        return SEAT_PRICES.ECONOMY;
+    };
     const getSelectedCount = () => { return 0; };
     const getBookedCount = () => { return 0; };
     const getAvailableCount = () => { return 0; };
