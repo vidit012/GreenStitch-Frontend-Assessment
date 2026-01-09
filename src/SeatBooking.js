@@ -61,9 +61,17 @@ const SeatBooking = () => {
         return getSelectedSeats_Flat().length;
     };
 
-    const getBookedCount = () => { return 0; };
-    const getAvailableCount = () => { return 0; };
-    const calculateTotalPrice = () => { return 0; };
+    const getBookedCount = () => {
+        return seats.flat().filter(seat => seat.status === SEAT_STATUS.BOOKED).length;
+    };
+
+    const getAvailableCount = () => {
+        return seats.flat().filter(seat => seat.status === SEAT_STATUS.AVAILABLE).length;
+    };
+
+    const calculateTotalPrice = () => {
+        return getSelectedSeats_Flat().reduce((total, seat) => total + getSeatPrice(seat.row), 0);
+    };
 
     const handleSeatClick = (row, seat) => {
         const currentSeat = seats[row][seat];
