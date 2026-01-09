@@ -53,13 +53,38 @@ const SeatBooking = () => {
         if (row <= 5) return SEAT_PRICES.STANDARD;
         return SEAT_PRICES.ECONOMY;
     };
-    const getSelectedCount = () => { return 0; };
+    const getSelectedSeats_Flat = () => {
+        return seats.flat().filter(seat => seat.status === SEAT_STATUS.SELECTED);
+    };
+
+    const getSelectedCount = () => {
+        return getSelectedSeats_Flat().length;
+    };
+
     const getBookedCount = () => { return 0; };
     const getAvailableCount = () => { return 0; };
     const calculateTotalPrice = () => { return 0; };
 
     const handleSeatClick = (row, seat) => {
-        // TODO: Implement seat selection logic
+        const currentSeat = seats[row][seat];
+
+        if (currentSeat.status === SEAT_STATUS.BOOKED) return;
+
+        const isCurrentlySelected = currentSeat.status === SEAT_STATUS.SELECTED;
+
+        // Validation: Max 8 seats
+        if (!isCurrentlySelected && getSelectedCount() >= MAX_SEATS_PER_BOOKING) {
+            alert(`You can only select up to ${MAX_SEATS_PER_BOOKING} seats per booking.`);
+            return;
+        }
+
+        const newSeats = [...seats];
+        newSeats[row] = [...newSeats[row]]; // Copy row
+        newSeats[row][seat] = {
+            ...currentSeat,
+            status: isCurrentlySelected ? SEAT_STATUS.AVAILABLE : SEAT_STATUS.SELECTED
+        };
+        setSeats(newSeats);
     };
 
     const handleBookSeats = () => {
