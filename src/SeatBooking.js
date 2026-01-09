@@ -145,11 +145,35 @@ const SeatBooking = () => {
     };
 
     const handleClearSelection = () => {
-        // TODO: Implement clear selection logic
+        const newSeats = seats.map(row =>
+            row.map(seat =>
+                seat.status === SEAT_STATUS.SELECTED
+                    ? { ...seat, status: SEAT_STATUS.AVAILABLE }
+                    : seat
+            )
+        );
+        setSeats(newSeats);
     };
 
     const handleReset = () => {
-        // TODO: Implement reset logic
+        if (window.confirm('Are you sure you want to reset all bookings? This cannot be undone.')) {
+            localStorage.removeItem('bookedSeats');
+            // Re-initialize manually to ensure fresh state
+            const clearedSeats = [];
+            for (let row = 0; row < ROWS; row++) {
+                const rowSeats = [];
+                for (let seat = 0; seat < SEATS_PER_ROW; seat++) {
+                    rowSeats.push({
+                        id: `${row}-${seat}`,
+                        row: row,
+                        seat: seat,
+                        status: SEAT_STATUS.AVAILABLE
+                    });
+                }
+                clearedSeats.push(rowSeats);
+            }
+            setSeats(clearedSeats);
+        }
     };
 
     return (
