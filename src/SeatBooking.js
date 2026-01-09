@@ -122,6 +122,26 @@ const SeatBooking = () => {
                 }
             }
         }
+
+        const count = selectedSeats.length;
+        const total = calculateTotalPrice();
+
+        if (window.confirm(`Confirm booking for ${count} seats? \nTotal Price: ₹${total}`)) {
+            const newSeats = seats.map(row =>
+                row.map(seat =>
+                    seat.status === SEAT_STATUS.SELECTED
+                        ? { ...seat, status: SEAT_STATUS.BOOKED }
+                        : seat
+                )
+            );
+
+            // Persist
+            setSeats(newSeats);
+            const allBookedIds = newSeats.flat()
+                .filter(s => s.status === SEAT_STATUS.BOOKED)
+                .map(s => s.id);
+            localStorage.setItem('bookedSeats', JSON.stringify(allBookedIds));
+        }
     };
 
     const handleClearSelection = () => {
