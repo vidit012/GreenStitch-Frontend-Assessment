@@ -96,7 +96,32 @@ const SeatBooking = () => {
     };
 
     const handleBookSeats = () => {
-        // TODO: Implement booking logic
+        const selectedSeats = getSelectedSeats_Flat();
+        if (selectedSeats.length === 0) return;
+
+        // Validation: Continuity Rule
+        for (let r = 0; r < ROWS; r++) {
+            const rowSeats = seats[r];
+            const selectedIndices = rowSeats
+                .map((s, idx) => (s.status === SEAT_STATUS.SELECTED ? idx : -1))
+                .filter(idx => idx !== -1);
+
+            if (selectedIndices.length < 2) continue;
+
+            selectedIndices.sort((a, b) => a - b);
+
+            for (let i = 0; i < selectedIndices.length - 1; i++) {
+                const start = selectedIndices[i];
+                const end = selectedIndices[i + 1];
+
+                for (let k = start + 1; k < end; k++) {
+                    if (rowSeats[k].status === SEAT_STATUS.AVAILABLE) {
+                        alert(`Invalid selection in Row ${String.fromCharCode(65 + r)}.\nPlease ensure no single available seats are left between your selected seats.`);
+                        return;
+                    }
+                }
+            }
+        }
     };
 
     const handleClearSelection = () => {
